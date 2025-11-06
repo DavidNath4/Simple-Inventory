@@ -25,6 +25,8 @@ export const mockPrismaClient = {
   auditLog: {
     create: jest.fn(),
     findMany: jest.fn(),
+    count: jest.fn(),
+    deleteMany: jest.fn(),
   },
   $transaction: jest.fn(),
 } as unknown as PrismaClient;

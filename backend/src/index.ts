@@ -8,6 +8,7 @@ import { createAuthRoutes } from './routes/auth.routes';
 import { createAdminRoutes } from './routes/admin.routes';
 import { createUserRoutes } from './routes/user.routes';
 import { createInventoryRoutes } from './routes/inventory.routes';
+import { createAuditRoutes } from './routes/audit.routes';
 import { SchedulerService } from './services/scheduler.service';
 
 // Load environment variables
@@ -34,6 +35,7 @@ app.use('/api/auth', createAuthRoutes(prisma));
 app.use('/api/admin', createAdminRoutes(prisma));
 app.use('/api/users', createUserRoutes(prisma));
 app.use('/api/inventory', createInventoryRoutes(prisma));
+app.use('/api/audit', createAuditRoutes(prisma));
 
 // Basic health check route
 app.get('/api/health', (req, res) => {

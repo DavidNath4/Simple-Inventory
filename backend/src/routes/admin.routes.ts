@@ -1,18 +1,20 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { AuthMiddleware } from '../middleware/auth.middleware';
+import { AuditMiddleware } from '../middleware/audit.middleware';
 import { createUserRoutes } from './user.routes';
 
 export function createAdminRoutes(prisma: PrismaClient): Router {
   const router = Router();
   const authMiddleware = new AuthMiddleware(prisma);
+  const auditMiddleware = new AuditMiddleware(prisma);
 
   // All admin routes require authentication and admin privileges
   router.use(authMiddleware.authenticate);
   router.use(authMiddleware.requireAdmin);
 
-  // Admin dashboard endpoint
-  router.get('/dashboard', async (req, res) => {
+  // Admin dashboard endpoint with audit logging
+  router.get('/dashboard', auditMiddleware.logSystemConfiguration('VIEW_ADMIN_DASHBOARD'), async (req, res) => {
     try {
       // Get basic system statistics (admin only)
       const userCount = await prisma.user.count();
