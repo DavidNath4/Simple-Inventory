@@ -28,14 +28,14 @@
   - Initialize Prisma in `backend/` directory and configure database connection
   - _Requirements: 1.2, 2.1, 3.2_
 
-- [-] 2.2 Create database tables and relationships
+- [x] 2.2 Create database tables and relationships
   - Define Prisma schema in `backend/prisma/schema.prisma` with User, InventoryItem, InventoryAction, and AuditLog models
   - Create and run initial database migration using `npx prisma migrate dev`
   - Generate Prisma client for type-safe database operations
   - **Git**: Commit database schema and migration files
   - _Requirements: 1.1, 1.2, 2.3, 3.3, 6.2_
 
-- [ ] 2.3 Implement data models and validation
+- [-] 2.3 Implement data models and validation
   - Create TypeScript interfaces and validation schemas
   - Implement data access layer with proper error handling
   - _Requirements: 1.2, 3.2_
