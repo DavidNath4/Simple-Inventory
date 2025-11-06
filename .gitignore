@@ -34,10 +34,17 @@ pids
 coverage/
 
 # IDE files
-.vscode/
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-workspace
 .idea/
 *.swp
 *.swo
+
+# Keep VS Code project settings
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/css_custom_data.json
 
 # OS generated files
 .DS_Store
