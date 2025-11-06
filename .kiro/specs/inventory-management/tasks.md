@@ -1,12 +1,25 @@
 # Implementation Plan
 
+## Git & GitHub Workflow Note
+**IMPORTANT**: After completing each task, commit all changes to Git with a descriptive commit message following the format: `feat/fix/docs: brief description of changes`, then push to GitHub. This ensures proper version control, backup, and tracks progress throughout development.
+
+- [ ] 0. Set up GitHub repository and version control
+  - Create a new GitHub repository for the inventory management project
+  - Initialize local Git repository with `git init`
+  - Add GitHub repository as remote origin with `git remote add origin <repository-url>`
+  - Create initial commit and push to GitHub with `git push -u origin main`
+  - Set up proper `.gitignore` file for Node.js, React, and environment files
+  - **Git**: Initial repository setup and first push to GitHub
+  - _Requirements: 6.1, 6.2, 6.3, 6.4_
+
 - [x] 1. Set up project structure and development environment
   - Create root directory structure: `frontend/`, `backend/`, `docker-compose.yml`, `.env`
   - Initialize React TypeScript app in `frontend/` directory
   - Initialize Express.js TypeScript project in `backend/` directory
   - Set up development tooling (ESLint, Prettier) for both frontend and backend
   - Create root-level `.gitignore` and `README.md` files
-  - _Requirements: All requirements depend on proper project setup_
+  - **Git**: Commit initial project setup
+  - _Requirements: All requirements depend on proper project setup, 6.1, 6.2_
 
 - [ ] 2. Implement database schema and models
 - [ ] 2.1 Set up PostgreSQL database and connection
@@ -19,7 +32,8 @@
   - Define Prisma schema in `backend/prisma/schema.prisma` with User, InventoryItem, InventoryAction, and AuditLog models
   - Create and run initial database migration using `npx prisma migrate dev`
   - Generate Prisma client for type-safe database operations
-  - _Requirements: 1.1, 1.2, 2.3, 3.3_
+  - **Git**: Commit database schema and migration files
+  - _Requirements: 1.1, 1.2, 2.3, 3.3, 6.2_
 
 - [ ] 2.3 Implement data models and validation
   - Create TypeScript interfaces and validation schemas
@@ -39,7 +53,8 @@
 - [ ] 3.2 Implement role-based access control
   - Create authorization middleware for Admin and User roles only
   - Implement admin privilege checking for user management functions
-  - _Requirements: 2.2, 2.4, 2.5_
+  - **Git**: Commit authentication and authorization implementation
+  - _Requirements: 2.2, 2.4, 2.5, 6.2_
 
 - [ ]* 3.3 Write authentication tests
   - Test login/logout flows and token validation
@@ -116,7 +131,8 @@
   - Set up CSS purging for production builds
   - Create base CSS file with Tailwind directives
   - Define custom design tokens for the inventory management theme
-  - _Requirements: 5.1, 5.3, 5.5_
+  - **Git**: Commit Tailwind CSS configuration and setup
+  - _Requirements: 5.1, 5.3, 5.5, 6.2_
 
 - [ ] 7.1 Set up React application with routing and styling
   - Install and configure Tailwind CSS in the React application
@@ -137,7 +153,8 @@
   - Implement forms for adding/editing inventory items with consistent styling
   - Create bulk update interface with responsive design
   - Design data tables with Tailwind utilities for better readability
-  - _Requirements: 1.1, 1.5, 3.1, 3.5, 5.2, 5.3_
+  - **Git**: Commit inventory management UI components
+  - _Requirements: 1.1, 1.5, 3.1, 3.5, 5.2, 5.3, 6.2_
 
 - [ ] 7.4 Implement admin panel interface
   - Create user management interface accessible only to Admin role with Tailwind styling
@@ -168,7 +185,8 @@
 - [ ] 8.1 Implement API client and error handling
   - Create API service layer with proper error handling
   - Implement loading states and user feedback
-  - _Requirements: All requirements depend on proper integration_
+  - **Git**: Commit frontend-backend integration implementation
+  - _Requirements: All requirements depend on proper integration, 6.2_
 
 - [ ] 8.2 Add real-time features with WebSocket or polling
   - Implement real-time inventory updates in UI
@@ -194,4 +212,34 @@
 - [ ]* 9.3 Write deployment documentation
   - Document deployment process and configuration
   - Create troubleshooting guide
-  - _Requirements: System maintainability_
+  - **Git**: Commit final documentation and deployment configurations
+  - _Requirements: System maintainability, 6.2_
+
+## Git & GitHub Workflow Summary
+
+### Repository Setup (Do This First!)
+1. Create a new GitHub repository for your inventory management project
+2. Initialize local Git repository: `git init`
+3. Add GitHub as remote origin: `git remote add origin <your-github-repo-url>`
+4. Create initial commit and push: `git add .` → `git commit -m "feat: initial project setup"` → `git push -u origin main`
+
+### Daily Workflow
+- **Frequency**: Commit and push after completing each task or logical unit of work
+- **Message Format**: Use conventional commit format (feat:, fix:, docs:, etc.)
+- **Content**: Include all related files and changes for the completed task
+- **Review**: Review changes before committing to ensure quality
+- **Push**: Always push to GitHub after committing for backup and collaboration
+
+### Complete Workflow Commands
+```bash
+git add .                                    # Stage all changes
+git commit -m "feat: descriptive message"   # Commit with meaningful message
+git push                                     # Push to GitHub
+```
+
+### Example Commit Messages
+- `feat: implement user authentication with JWT tokens`
+- `feat: add Tailwind CSS configuration and base styles`
+- `fix: resolve inventory update validation issues`
+- `docs: update README with setup instructions`
+- `refactor: optimize database query performance`

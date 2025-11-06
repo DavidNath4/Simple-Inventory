@@ -74,3 +74,16 @@ This document outlines the requirements for an Inventory Management Application 
 3. THE Inventory Management System SHALL maintain consistent visual design patterns across all pages
 4. THE Inventory Management System SHALL provide accessible UI components that meet WCAG guidelines
 5. THE Inventory Management System SHALL use a cohesive color scheme and typography system
+
+### Requirement 6
+
+**User Story:** As a developer, I want to maintain proper version control and development workflow, so that I can track changes, collaborate effectively, and maintain code quality.
+
+#### Acceptance Criteria
+
+1. THE development process SHALL use Git for version control with meaningful commit messages
+2. THE project SHALL be hosted on GitHub for remote backup and collaboration
+3. WHEN a task is completed, THE developer SHALL commit all related changes and push to GitHub
+4. THE Git repository SHALL maintain a clean commit history with logical groupings of changes
+5. THE development workflow SHALL include proper branching strategy for feature development
+6. THE codebase SHALL be committed and pushed regularly to prevent loss of work and enable collaboration
