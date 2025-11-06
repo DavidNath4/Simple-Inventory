@@ -9,6 +9,7 @@ import { createAdminRoutes } from './routes/admin.routes';
 import { createUserRoutes } from './routes/user.routes';
 import { createInventoryRoutes } from './routes/inventory.routes';
 import { createAuditRoutes } from './routes/audit.routes';
+import { createReportingRoutes } from './routes/reporting.routes';
 import { SchedulerService } from './services/scheduler.service';
 
 // Load environment variables
@@ -36,6 +37,7 @@ app.use('/api/admin', createAdminRoutes(prisma));
 app.use('/api/users', createUserRoutes(prisma));
 app.use('/api/inventory', createInventoryRoutes(prisma));
 app.use('/api/audit', createAuditRoutes(prisma));
+app.use('/api/reports', createReportingRoutes(prisma));
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
@@ -84,6 +86,7 @@ app.listen(PORT, () => {
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
   console.log(`📦 Inventory endpoints: http://localhost:${PORT}/api/inventory`);
+  console.log(`📈 Reporting endpoints: http://localhost:${PORT}/api/reports`);
   
   // Start background monitoring service (check every 30 minutes)
   const monitoringInterval = parseInt(process.env.MONITORING_INTERVAL_MINUTES || '30');
