@@ -56,33 +56,33 @@
   - **Git**: Commit authentication and authorization implementation
   - _Requirements: 2.2, 2.4, 2.5, 6.2_
 
-- [ ]* 3.3 Write authentication tests
+- [x] 3.3 Write authentication tests
   - Test login/logout flows and token validation
   - Test role-based access restrictions
   - _Requirements: 2.2, 2.4_
 
-- [ ] 4. Build core inventory management API
-- [ ] 4.1 Implement inventory CRUD operations
+- [x] 4. Build core inventory management API
+- [x] 4.1 Implement inventory CRUD operations
   - Create REST endpoints for inventory item management
   - Implement search and filtering capabilities
   - _Requirements: 1.1, 1.5, 3.1_
 
-- [ ] 4.2 Implement real-time inventory updates
+- [x] 4.2 Implement real-time inventory updates
   - Create endpoints for stock level updates with validation
   - Implement inventory movement tracking
   - _Requirements: 1.1, 3.1, 3.3_
 
-- [ ] 4.3 Implement low stock alert system
+- [x] 4.3 Implement low stock alert system
   - Create background service to monitor stock levels
   - Generate alerts when stock falls below thresholds
   - _Requirements: 3.4_
 
-- [ ] 4.4 Support bulk inventory operations
+- [x] 4.4 Support bulk inventory operations
   - Implement bulk update endpoints with transaction support
   - Add data validation for bulk operations
   - _Requirements: 3.5_
 
-- [ ]* 4.5 Write inventory API tests
+- [x] 4.5 Write inventory API tests
   - Test CRUD operations and business logic
   - Test bulk operations and error scenarios
   - _Requirements: 1.1, 3.1, 3.4, 3.5_

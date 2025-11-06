@@ -161,3 +161,46 @@ export const validateLogin = (data: LoginRequest): void => {
     throw new ValidationError('Password is required', 'password');
   }
 };
+
+// Validation result interface
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+// Wrapper functions that return validation results instead of throwing
+export const validateInventoryItem = (data: CreateInventoryItemRequest | UpdateInventoryItemRequest, isCreate: boolean = true): ValidationResult => {
+  const errors: string[] = [];
+  
+  try {
+    if (isCreate) {
+      validateCreateInventoryItem(data as CreateInventoryItemRequest);
+    } else {
+      validateUpdateInventoryItem(data as UpdateInventoryItemRequest);
+    }
+    return { isValid: true, errors: [] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      errors.push(error.message);
+    } else {
+      errors.push('Validation failed');
+    }
+    return { isValid: false, errors };
+  }
+};
+
+export const validateInventoryAction = (data: CreateInventoryActionRequest): ValidationResult => {
+  const errors: string[] = [];
+  
+  try {
+    validateCreateInventoryAction(data);
+    return { isValid: true, errors: [] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      errors.push(error.message);
+    } else {
+      errors.push('Validation failed');
+    }
+    return { isValid: false, errors };
+  }
+};

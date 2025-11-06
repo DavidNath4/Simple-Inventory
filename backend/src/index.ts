@@ -7,6 +7,8 @@ import { PrismaClient } from '@prisma/client';
 import { createAuthRoutes } from './routes/auth.routes';
 import { createAdminRoutes } from './routes/admin.routes';
 import { createUserRoutes } from './routes/user.routes';
+import { createInventoryRoutes } from './routes/inventory.routes';
+import { SchedulerService } from './services/scheduler.service';
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +18,9 @@ const PORT = process.env.PORT || 3001;
 
 // Initialize Prisma client
 const prisma = new PrismaClient();
+
+// Initialize scheduler service for background monitoring
+const schedulerService = new SchedulerService(prisma);
 
 // Middleware
 app.use(helmet());
@@ -28,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', createAuthRoutes(prisma));
 app.use('/api/admin', createAdminRoutes(prisma));
 app.use('/api/users', createUserRoutes(prisma));
+app.use('/api/inventory', createInventoryRoutes(prisma));
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
@@ -39,7 +45,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // 404 handler for undefined routes
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     success: false,
     error: `Route ${req.method} ${req.originalUrl} not found`,
@@ -58,12 +64,14 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 // Graceful shutdown
 process.on('SIGINT', async () => {
   console.log('Shutting down gracefully...');
+  schedulerService.stopMonitoring();
   await prisma.$disconnect();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
   console.log('Shutting down gracefully...');
+  schedulerService.stopMonitoring();
   await prisma.$disconnect();
   process.exit(0);
 });
@@ -73,6 +81,11 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
+  console.log(`📦 Inventory endpoints: http://localhost:${PORT}/api/inventory`);
+  
+  // Start background monitoring service (check every 30 minutes)
+  const monitoringInterval = parseInt(process.env.MONITORING_INTERVAL_MINUTES || '30');
+  schedulerService.startMonitoring(monitoringInterval);
 });
 
 export default app;
