@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LoginRequest, AuthResponse, ApiResponse } from '../types';
-import { useFormValidation, commonValidationRules } from '../hooks';
+import { LoginRequest, AuthResponse } from '../types';
+import { useFormValidation, commonValidationRules, useApiMutation } from '../hooks';
 import { FormInput, LoadingButton } from '../components';
 import apiService from '../services/api';
 
@@ -10,9 +10,22 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [generalError, setGeneralError] = useState<string>('');
+
+  // Use the enhanced API mutation hook
+  const loginMutation = useApiMutation(
+    (credentials: LoginRequest) => apiService.login(credentials),
+    {
+      showSuccessNotification: false, // We'll handle success manually
+      showErrorNotification: true,
+      onSuccess: (response: AuthResponse) => {
+        // Update auth context
+        login(response.user, response.token);
+        // Navigate to dashboard
+        navigate('/dashboard');
+      },
+    }
+  );
 
   const {
     values: formData,
@@ -35,9 +48,9 @@ const Login: React.FC = () => {
     const { name, value } = e.target;
     handleChange(name, value);
 
-    // Clear general error when user starts typing
-    if (generalError) {
-      setGeneralError('');
+    // Clear API error when user starts typing
+    if (loginMutation.error) {
+      loginMutation.reset();
     }
   };
 
@@ -53,34 +66,11 @@ const Login: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-    setGeneralError('');
-
     try {
-      const response = await apiService.post<ApiResponse<AuthResponse>>(
-        '/auth/login',
-        formData
-      );
-
-      if (response.success && response.data) {
-        // Set the token in the API service
-        apiService.setToken(response.data.token);
-
-        // Update auth context
-        login(response.data.user, response.data.token);
-
-        // Navigate to dashboard
-        navigate('/dashboard');
-      } else {
-        setGeneralError('Login failed. Please try again.');
-      }
-    } catch (error: any) {
+      await loginMutation.execute(formData);
+    } catch (error) {
+      // Error handling is managed by the useApiMutation hook
       console.error('Login error:', error);
-      setGeneralError(
-        error.message || 'Invalid email or password. Please try again.'
-      );
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -116,8 +106,8 @@ const Login: React.FC = () => {
         <div className='card'>
           <div className='card-body'>
             <form className='space-y-6' onSubmit={handleSubmit}>
-              {/* General Error */}
-              {generalError && (
+              {/* API Error */}
+              {loginMutation.error && (
                 <div className='alert alert-error'>
                   <div className='flex'>
                     <svg
@@ -131,8 +121,17 @@ const Login: React.FC = () => {
                         clipRule='evenodd'
                       />
                     </svg>
-                    {generalError}
+                    {loginMutation.error.message}
                   </div>
+                  {loginMutation.error.code === 'NETWORK_ERROR' && (
+                    <button
+                      type="button"
+                      onClick={() => loginMutation.retry()}
+                      className="mt-2 text-sm underline hover:no-underline"
+                    >
+                      Try again
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -147,7 +146,7 @@ const Login: React.FC = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                disabled={isLoading}
+                disabled={loginMutation.loading}
                 error={errors.email}
                 leftIcon={
                   <svg fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -172,7 +171,7 @@ const Login: React.FC = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                disabled={isLoading}
+                disabled={loginMutation.loading}
                 error={errors.password}
                 leftIcon={
                   <svg fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -217,10 +216,11 @@ const Login: React.FC = () => {
               {/* Submit Button */}
               <LoadingButton
                 type='submit'
-                loading={isLoading}
+                loading={loginMutation.loading}
                 loadingText='Signing in...'
                 fullWidth
                 variant='primary'
+                disabled={loginMutation.loading}
               >
                 Sign In
               </LoadingButton>

@@ -169,11 +169,10 @@ const Admin: React.FC = () => {
   }> = ({ tab, label, icon }) => (
     <button
       onClick={() => setActiveTab(tab as any)}
-      className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
-        activeTab === tab
-          ? 'bg-primary-100 text-primary-700 shadow-sm'
-          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-      }`}
+      className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${activeTab === tab
+        ? 'bg-primary-100 text-primary-700 shadow-sm'
+        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+        }`}
     >
       <span className='mr-2'>{icon}</span>
       {label}
@@ -483,22 +482,20 @@ const Admin: React.FC = () => {
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap'>
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                user.role === UserRole.ADMIN
-                                  ? 'bg-error-100 text-error-800'
-                                  : 'bg-primary-100 text-primary-800'
-                              }`}
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === UserRole.ADMIN
+                                ? 'bg-error-100 text-error-800'
+                                : 'bg-primary-100 text-primary-800'
+                                }`}
                             >
                               {user.role}
                             </span>
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap'>
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                user.isActive
-                                  ? 'bg-success-100 text-success-800'
-                                  : 'bg-gray-100 text-gray-800'
-                              }`}
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isActive
+                                ? 'bg-success-100 text-success-800'
+                                : 'bg-gray-100 text-gray-800'
+                                }`}
                             >
                               <span
                                 className={`status-dot mr-1.5 ${user.isActive ? 'online' : 'offline'}`}
@@ -513,11 +510,10 @@ const Admin: React.FC = () => {
                             <div className='flex items-center justify-end space-x-2'>
                               <button
                                 onClick={() => handleToggleUserStatus(user)}
-                                className={`text-xs px-3 py-1 rounded-md font-medium transition-colors ${
-                                  user.isActive
-                                    ? 'text-warning-700 bg-warning-100 hover:bg-warning-200'
-                                    : 'text-success-700 bg-success-100 hover:bg-success-200'
-                                }`}
+                                className={`text-xs px-3 py-1 rounded-md font-medium transition-colors ${user.isActive
+                                  ? 'text-warning-700 bg-warning-100 hover:bg-warning-200'
+                                  : 'text-success-700 bg-success-100 hover:bg-success-200'
+                                  }`}
                               >
                                 {user.isActive ? 'Deactivate' : 'Activate'}
                               </button>

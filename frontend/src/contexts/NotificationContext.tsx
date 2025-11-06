@@ -95,7 +95,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     (notification: Omit<Notification, 'id' | 'createdAt'>) => {
       const newNotification: Notification = {
         ...notification,
-        id: `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `notification_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
         createdAt: new Date(),
         duration: notification.duration ?? 5000, // Default 5 seconds
       };
@@ -126,7 +126,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const addAlert = useCallback((alert: Omit<Alert, 'id' | 'createdAt'>) => {
     const newAlert: Alert = {
       ...alert,
-      id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `alert_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       createdAt: new Date(),
       acknowledged: false,
       dismissible: alert.dismissible ?? true,

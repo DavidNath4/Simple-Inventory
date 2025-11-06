@@ -6,8 +6,23 @@ import {
   Navigate,
 } from 'react-router-dom';
 import { AuthProvider, NotificationProvider, useAuth } from './contexts';
-import { ProtectedRoute, Layout, ToastContainer } from './components';
+import { ProtectedRoute, Layout, ToastContainer, ErrorBoundary } from './components';
 import { Dashboard, Inventory, Admin, Login } from './pages';
+import { useApiService } from './hooks';
+
+const AppContent: React.FC = () => {
+  // Initialize API service with global error handling
+  useApiService();
+
+  return (
+    <Router>
+      <div className='App'>
+        <AppRoutes />
+        <ToastContainer />
+      </div>
+    </Router>
+  );
+};
 
 const AppRoutes: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -68,16 +83,13 @@ const AppRoutes: React.FC = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <NotificationProvider>
-        <Router>
-          <div className='App'>
-            <AppRoutes />
-            <ToastContainer />
-          </div>
-        </Router>
-      </NotificationProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <NotificationProvider>
+          <AppContent />
+        </NotificationProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
