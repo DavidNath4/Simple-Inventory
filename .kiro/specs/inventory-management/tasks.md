@@ -3,7 +3,7 @@
 ## Git & GitHub Workflow Note
 **IMPORTANT**: After completing each task, commit all changes to Git with a descriptive commit message following the format: `feat/fix/docs: brief description of changes`, then push to GitHub. This ensures proper version control, backup, and tracks progress throughout development.
 
-- [ ] 0. Set up GitHub repository and version control
+- [x] 0. Set up GitHub repository and version control
   - Create a new GitHub repository for the inventory management project
   - Initialize local Git repository with `git init`
   - Add GitHub repository as remote origin with `git remote add origin <repository-url>`
@@ -21,14 +21,14 @@
   - **Git**: Commit initial project setup
   - _Requirements: All requirements depend on proper project setup, 6.1, 6.2_
 
-- [ ] 2. Implement database schema and models
-- [ ] 2.1 Set up PostgreSQL database and connection
+- [-] 2. Implement database schema and models
+- [x] 2.1 Set up PostgreSQL database and connection
   - Create `docker-compose.yml` in root directory for PostgreSQL container
   - Set up `.env` file with database connection variables
   - Initialize Prisma in `backend/` directory and configure database connection
   - _Requirements: 1.2, 2.1, 3.2_
 
-- [ ] 2.2 Create database tables and relationships
+- [-] 2.2 Create database tables and relationships
   - Define Prisma schema in `backend/prisma/schema.prisma` with User, InventoryItem, InventoryAction, and AuditLog models
   - Create and run initial database migration using `npx prisma migrate dev`
   - Generate Prisma client for type-safe database operations
