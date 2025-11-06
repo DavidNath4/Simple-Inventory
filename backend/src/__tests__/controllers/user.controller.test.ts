@@ -2,6 +2,16 @@ import { Request, Response } from 'express';
 import { UserController } from '../../controllers/user.controller';
 import { mockPrismaClient } from '../setup';
 import { UserRole } from '@prisma/client';
+import { AuthUser } from '../../types';
+
+// Extend Express Request interface to include user for testing
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthUser;
+    }
+  }
+}
 
 describe('UserController', () => {
   let userController: UserController;

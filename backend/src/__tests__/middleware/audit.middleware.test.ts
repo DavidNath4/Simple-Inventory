@@ -2,6 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import { AuditMiddleware } from '../../middleware/audit.middleware';
 import { mockPrismaClient } from '../setup';
 import { UserRole } from '@prisma/client';
+import { AuthUser } from '../../types';
+
+// Extend Express Request interface to include user for testing
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthUser;
+    }
+  }
+}
 
 describe('AuditMiddleware', () => {
   let auditMiddleware: AuditMiddleware;
