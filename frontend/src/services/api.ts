@@ -81,6 +81,14 @@ class ApiService {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
 
+  // PATCH request
+  async patch<T>(endpoint: string, data?: any): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
   // Health check
   async healthCheck(): Promise<
     ApiResponse<{ status: string; message: string }>
@@ -194,6 +202,150 @@ class ApiService {
 
   async bulkDeleteItems(ids: string[]) {
     return this.post('/inventory/bulk/delete', { ids });
+  }
+
+  // Admin methods
+  async getAdminDashboard() {
+    return this.get('/admin/dashboard');
+  }
+
+  async getUsers() {
+    return this.get('/admin/users');
+  }
+
+  async createUser(userData: {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+  }) {
+    return this.post('/admin/users', userData);
+  }
+
+  async updateUser(id: string, userData: any) {
+    return this.put(`/admin/users/${id}`, userData);
+  }
+
+  async activateUser(id: string) {
+    return this.patch(`/admin/users/${id}/activate`, {});
+  }
+
+  async deactivateUser(id: string) {
+    return this.patch(`/admin/users/${id}/deactivate`, {});
+  }
+
+  async deleteUser(id: string) {
+    return this.delete(`/admin/users/${id}`);
+  }
+
+  // Reporting methods
+  async getDashboardMetrics(filter?: {
+    startDate?: string;
+    endDate?: string;
+    category?: string;
+    location?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (filter) {
+      Object.entries(filter).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return this.get(`/reports/dashboard${query ? `?${query}` : ''}`);
+  }
+
+  async getInventoryReport(filter?: {
+    startDate?: string;
+    endDate?: string;
+    category?: string;
+    location?: string;
+    itemId?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (filter) {
+      Object.entries(filter).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return this.get(`/reports/inventory${query ? `?${query}` : ''}`);
+  }
+
+  async getInventoryMetrics(filter?: {
+    startDate?: string;
+    endDate?: string;
+    category?: string;
+    location?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (filter) {
+      Object.entries(filter).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return this.get(`/reports/metrics${query ? `?${query}` : ''}`);
+  }
+
+  async exportInventoryReport(
+    format: 'csv' | 'json' | 'pdf',
+    filter?: {
+      startDate?: string;
+      endDate?: string;
+      category?: string;
+      location?: string;
+      itemId?: string;
+    }
+  ) {
+    const queryParams = new URLSearchParams();
+    if (filter) {
+      Object.entries(filter).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+
+    // For file downloads, we need to handle the response differently
+    const url = `${this.baseURL}/reports/export/${format}${query ? `?${query}` : ''}`;
+    const headers: Record<string, string> = {};
+
+    if (this.token) {
+      headers.Authorization = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      throw new Error('Failed to export report');
+    }
+
+    return response.blob();
+  }
+
+  // Alert methods
+  async getAlerts() {
+    return this.get('/inventory/alerts');
+  }
+
+  async getAlertStatistics() {
+    return this.get('/inventory/alerts/statistics');
+  }
+
+  async triggerAlertCheck() {
+    return this.post('/inventory/alerts/check');
+  }
+
+  async monitorStockLevels() {
+    return this.get('/inventory/monitor');
   }
 }
 

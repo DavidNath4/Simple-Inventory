@@ -147,3 +147,171 @@ export interface BulkStockUpdate {
   type?: ActionType;
   notes?: string;
 }
+
+// Reporting types
+export interface ReportFilter {
+  startDate?: string;
+  endDate?: string;
+  category?: string;
+  location?: string;
+  itemId?: string;
+}
+
+export interface InventoryReport {
+  summary: {
+    totalItems: number;
+    totalValue: number;
+    lowStockItems: number;
+    categories: number;
+    locations: number;
+  };
+  items: Array<{
+    id: string;
+    name: string;
+    sku: string;
+    category: string;
+    location: string;
+    stockLevel: number;
+    minStock: number;
+    unitPrice: number;
+    totalValue: number;
+    status: 'normal' | 'low_stock' | 'out_of_stock';
+  }>;
+  actions: Array<{
+    id: string;
+    type: ActionType;
+    quantity: number;
+    itemName: string;
+    itemSku: string;
+    userName: string;
+    createdAt: string;
+  }>;
+}
+
+export interface InventoryMetrics {
+  totalItems: number;
+  totalValue: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  topCategories: Array<{
+    category: string;
+    itemCount: number;
+    totalValue: number;
+  }>;
+  topLocations: Array<{
+    location: string;
+    itemCount: number;
+    totalValue: number;
+  }>;
+  recentActions: Array<{
+    date: string;
+    actionCount: number;
+    actionsByType: Record<ActionType, number>;
+  }>;
+  stockTrends: Array<{
+    date: string;
+    totalStock: number;
+    stockIn: number;
+    stockOut: number;
+  }>;
+}
+
+export interface DashboardMetrics {
+  overview: {
+    totalItems: number;
+    totalValue: number;
+    lowStockCount: number;
+    outOfStockCount: number;
+    totalCategories: number;
+    totalLocations: number;
+  };
+  alerts: {
+    criticalAlerts: number;
+    warningAlerts: number;
+    recentAlerts: Array<{
+      id: string;
+      itemName: string;
+      itemSku: string;
+      currentStock: number;
+      minStock: number;
+      severity: 'critical' | 'warning';
+      createdAt: string;
+    }>;
+  };
+  performance: {
+    stockTurnover: number;
+    averageStockLevel: number;
+    stockAccuracy: number;
+    topMovingItems: Array<{
+      id: string;
+      name: string;
+      sku: string;
+      totalMovements: number;
+      netMovement: number;
+    }>;
+  };
+  trends: {
+    stockMovements: Array<{
+      date: string;
+      stockIn: number;
+      stockOut: number;
+      netChange: number;
+    }>;
+    valueChanges: Array<{
+      date: string;
+      totalValue: number;
+      valueChange: number;
+    }>;
+  };
+}
+
+export type ExportFormat = 'csv' | 'json' | 'pdf';
+
+// Notification types
+export interface Notification {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  message: string;
+  duration?: number; // in milliseconds, 0 means persistent
+  createdAt: Date;
+  actions?: NotificationAction[];
+}
+
+export interface NotificationAction {
+  label: string;
+  action: () => void;
+  variant?: 'primary' | 'secondary';
+}
+
+export interface Alert {
+  id: string;
+  type: 'low_stock' | 'out_of_stock' | 'system' | 'inventory_update';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  title: string;
+  message: string;
+  itemId?: string;
+  itemName?: string;
+  itemSku?: string;
+  currentStock?: number;
+  minStock?: number;
+  location?: string;
+  category?: string;
+  createdAt: Date;
+  acknowledged?: boolean;
+  dismissible?: boolean;
+}
+
+export interface NotificationContextType {
+  notifications: Notification[];
+  alerts: Alert[];
+  addNotification: (
+    notification: Omit<Notification, 'id' | 'createdAt'>
+  ) => void;
+  removeNotification: (id: string) => void;
+  clearNotifications: () => void;
+  addAlert: (alert: Omit<Alert, 'id' | 'createdAt'>) => void;
+  removeAlert: (id: string) => void;
+  acknowledgeAlert: (id: string) => void;
+  clearAlerts: () => void;
+}

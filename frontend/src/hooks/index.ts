@@ -4,3 +4,4 @@ export type {
   ValidationRules,
   FormErrors,
 } from './useFormValidation';
+export { useInventoryNotifications } from './useInventoryNotifications';

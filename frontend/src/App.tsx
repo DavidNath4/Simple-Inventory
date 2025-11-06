@@ -5,8 +5,8 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts';
-import { ProtectedRoute, Layout } from './components';
+import { AuthProvider, NotificationProvider, useAuth } from './contexts';
+import { ProtectedRoute, Layout, ToastContainer } from './components';
 import { Dashboard, Inventory, Admin, Login } from './pages';
 
 const AppRoutes: React.FC = () => {
@@ -69,11 +69,14 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className='App'>
-          <AppRoutes />
-        </div>
-      </Router>
+      <NotificationProvider>
+        <Router>
+          <div className='App'>
+            <AppRoutes />
+            <ToastContainer />
+          </div>
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

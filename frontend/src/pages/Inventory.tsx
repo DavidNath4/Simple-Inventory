@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { InventoryItem, ActionType } from '../types';
 import { apiService } from '../services/api';
 import { LoadingButton } from '../components';
+import { useInventoryNotifications } from '../hooks';
 
 interface InventoryFilter {
   search: string;
@@ -43,6 +44,8 @@ const Inventory: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
+  const { notifyInventoryUpdate, notifyBulkOperation, notifySystem } =
+    useInventoryNotifications();
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -97,7 +100,10 @@ const Inventory: React.FC = () => {
       setTotalPages(response.pagination.totalPages);
       setTotalItems(response.pagination.total);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load inventory');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to load inventory';
+      setError(errorMessage);
+      notifySystem('error', 'Load Failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -119,8 +125,9 @@ const Inventory: React.FC = () => {
       setLocations(locationsRes.data);
     } catch (err) {
       console.error('Failed to load filter options:', err);
+      notifySystem('error', 'Load Failed', 'Failed to load filter options');
     }
-  }, []);
+  }, [notifySystem]);
 
   useEffect(() => {
     loadItems();
@@ -166,12 +173,22 @@ const Inventory: React.FC = () => {
     try {
       setLoading(true);
 
+      let updatedItem: InventoryItem;
       if (editingItem) {
         // Update existing item
-        await apiService.put(`/inventory/${editingItem.id}`, formData);
+        const response = (await apiService.put(
+          `/inventory/${editingItem.id}`,
+          formData
+        )) as { data: InventoryItem };
+        updatedItem = response.data;
+        notifyInventoryUpdate('updated', updatedItem);
       } else {
         // Create new item
-        await apiService.post('/inventory', formData);
+        const response = (await apiService.post('/inventory', formData)) as {
+          data: InventoryItem;
+        };
+        updatedItem = response.data;
+        notifyInventoryUpdate('created', updatedItem);
       }
 
       setShowAddModal(false);
@@ -180,7 +197,10 @@ const Inventory: React.FC = () => {
       setFormData({});
       await loadItems();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save item');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to save item';
+      setError(errorMessage);
+      notifySystem('error', 'Save Failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -188,14 +208,21 @@ const Inventory: React.FC = () => {
 
   // Handle delete
   const handleDelete = async (itemId: string) => {
+    const itemToDelete = items.find((item) => item.id === itemId);
+    if (!itemToDelete) return;
+
     if (!window.confirm('Are you sure you want to delete this item?')) return;
 
     try {
       setLoading(true);
       await apiService.delete(`/inventory/${itemId}`);
+      notifyInventoryUpdate('deleted', itemToDelete);
       await loadItems();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete item');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to delete item';
+      setError(errorMessage);
+      notifySystem('error', 'Delete Failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -210,12 +237,14 @@ const Inventory: React.FC = () => {
         await apiService.post('/inventory/bulk/update', {
           updates: bulkUpdates,
         });
+        notifyBulkOperation('update', bulkUpdates.length, true);
       }
 
       if (stockUpdates.length > 0) {
         await apiService.post('/inventory/bulk/stock', {
           updates: stockUpdates,
         });
+        notifyBulkOperation('update', stockUpdates.length, true);
       }
 
       setShowBulkModal(false);
@@ -225,9 +254,10 @@ const Inventory: React.FC = () => {
       setSelectAll(false);
       await loadItems();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to perform bulk update'
-      );
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to perform bulk update';
+      setError(errorMessage);
+      notifySystem('error', 'Bulk Update Failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -235,14 +265,29 @@ const Inventory: React.FC = () => {
 
   // Handle stock adjustment
   const handleStockAdjust = async (itemId: string, newStock: number) => {
+    const item = items.find((i) => i.id === itemId);
+    if (!item) return;
+
+    const oldStock = item.stockLevel;
     try {
-      await apiService.post(`/inventory/${itemId}/adjust`, {
+      const response = (await apiService.post(`/inventory/${itemId}/adjust`, {
         stockLevel: newStock,
         notes: 'Quick adjustment from inventory page',
+      })) as { data?: InventoryItem };
+
+      const updatedItem = response.data || { ...item, stockLevel: newStock };
+      notifyInventoryUpdate('stock_updated', updatedItem, {
+        oldStock,
+        newStock,
+        quantity: newStock - oldStock,
       });
+
       await loadItems();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to adjust stock');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to adjust stock';
+      setError(errorMessage);
+      notifySystem('error', 'Stock Adjustment Failed', errorMessage);
     }
   };
 
