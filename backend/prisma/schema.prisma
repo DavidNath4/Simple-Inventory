@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      UserRole @default(USER)
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  inventoryActions InventoryAction[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+model InventoryItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  sku         String   @unique
+  category    String
+  stockLevel  Int      @default(0)
+  minStock    Int      @default(0)
+  maxStock    Int?
+  unitPrice   Decimal
+  location    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  actions InventoryAction[]
+
+  @@map("inventory_items")
+}
+
+model InventoryAction {
+  id        String     @id @default(cuid())
+  type      ActionType
+  quantity  Int
+  notes     String?
+  createdAt DateTime   @default(now())
+  
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  
+  itemId String
+  item   InventoryItem @relation(fields: [itemId], references: [id])
+
+  @@map("inventory_actions")
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  action       String
+  resourceType String
+  resourceId   String
+  changes      Json?
+  createdAt    DateTime @default(now())
+  
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum ActionType {
+  ADD_STOCK
+  REMOVE_STOCK
+  ADJUST_STOCK
+  TRANSFER
+}
