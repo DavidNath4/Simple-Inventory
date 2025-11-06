@@ -1,0 +1,140 @@
+/* Additional component-specific styles that can't be expressed with Tailwind utilities */
+
+/* Loading spinner component */
+.spinner {
+  @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+}
+
+.spinner-lg {
+  @apply w-8 h-8 border-4;
+}
+
+/* Custom dropdown styles */
+.dropdown-menu {
+  @apply absolute right-0 mt-2 w-56 origin-top-right bg-white border border-gray-200 rounded-lg shadow-medium z-50;
+  transform: scale(0.95);
+  opacity: 0;
+  transition: all 0.1s ease-out;
+}
+
+.dropdown-menu.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.dropdown-item {
+  @apply block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150;
+}
+
+.dropdown-item:first-child {
+  @apply rounded-t-lg;
+}
+
+.dropdown-item:last-child {
+  @apply rounded-b-lg;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  @apply bg-white rounded-xl shadow-strong max-w-lg w-full max-h-screen overflow-y-auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Toast notification styles */
+.toast {
+  @apply fixed top-4 right-4 max-w-sm w-full bg-white border border-gray-200 rounded-lg shadow-medium z-50 p-4;
+  animation: slideDown 0.3s ease-out;
+}
+
+.toast.success {
+  @apply border-success-200 bg-success-50;
+}
+
+.toast.error {
+  @apply border-error-200 bg-error-50;
+}
+
+.toast.warning {
+  @apply border-warning-200 bg-warning-50;
+}
+
+.toast.info {
+  @apply border-primary-200 bg-primary-50;
+}
+
+/* Progress bar */
+.progress-bar {
+  @apply w-full bg-gray-200 rounded-full h-2 overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-primary-600 transition-all duration-300 ease-out;
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply bg-gray-200 animate-pulse rounded;
+}
+
+.skeleton-text {
+  @apply h-4 bg-gray-200 animate-pulse rounded;
+}
+
+.skeleton-avatar {
+  @apply w-10 h-10 bg-gray-200 animate-pulse rounded-full;
+}
+
+/* Data visualization elements */
+.chart-container {
+  @apply relative w-full h-64 bg-white rounded-lg border border-gray-200 p-4;
+}
+
+.metric-card {
+  @apply bg-white rounded-lg border border-gray-200 p-6 hover:shadow-medium transition-shadow duration-200;
+}
+
+.metric-value {
+  @apply text-3xl font-bold text-gray-900;
+}
+
+.metric-label {
+  @apply text-sm font-medium text-gray-500 uppercase tracking-wide;
+}
+
+.metric-change {
+  @apply text-sm font-medium;
+}
+
+.metric-change.positive {
+  @apply text-success-600;
+}
+
+.metric-change.negative {
+  @apply text-error-600;
+}
+
+/* Status indicators */
+.status-dot {
+  @apply inline-block w-2 h-2 rounded-full;
+}
+
+.status-dot.online {
+  @apply bg-success-500;
+}
+
+.status-dot.offline {
+  @apply bg-gray-400;
+}
+
+.status-dot.warning {
+  @apply bg-warning-500;
+}
+
+.status-dot.error {
+  @apply bg-error-500;
+}

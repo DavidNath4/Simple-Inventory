@@ -1,0 +1,192 @@
+/* Custom utility classes for specific inventory management needs */
+
+/* Layout utilities */
+.container-fluid {
+  @apply w-full max-w-none px-4 sm:px-6 lg:px-8;
+}
+
+.container-narrow {
+  @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.container-wide {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Spacing utilities for inventory layouts */
+.section-spacing {
+  @apply py-8 sm:py-12 lg:py-16;
+}
+
+.card-spacing {
+  @apply space-y-6;
+}
+
+.form-spacing {
+  @apply space-y-4;
+}
+
+/* Typography utilities */
+.heading-primary {
+  @apply text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight;
+}
+
+.heading-secondary {
+  @apply text-xl sm:text-2xl font-semibold text-gray-900;
+}
+
+.heading-tertiary {
+  @apply text-lg sm:text-xl font-medium text-gray-900;
+}
+
+.text-muted {
+  @apply text-gray-600;
+}
+
+.text-subtle {
+  @apply text-gray-500;
+}
+
+/* Interactive utilities */
+.clickable {
+  @apply cursor-pointer transition-colors duration-150;
+}
+
+.clickable:hover {
+  @apply bg-gray-50;
+}
+
+.interactive-row {
+  @apply hover:bg-gray-50 cursor-pointer transition-colors duration-150;
+}
+
+/* State utilities */
+.loading-state {
+  @apply opacity-50 pointer-events-none;
+}
+
+.disabled-state {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.selected-state {
+  @apply bg-primary-50 border-primary-200;
+}
+
+/* Inventory-specific utilities */
+.stock-level-high {
+  @apply text-success-600 bg-success-50 border-success-200;
+}
+
+.stock-level-medium {
+  @apply text-warning-600 bg-warning-50 border-warning-200;
+}
+
+.stock-level-low {
+  @apply text-error-600 bg-error-50 border-error-200;
+}
+
+.stock-level-out {
+  @apply text-gray-600 bg-gray-50 border-gray-200;
+}
+
+/* Action utilities */
+.action-destructive {
+  @apply text-error-600 hover:text-error-700 hover:bg-error-50;
+}
+
+.action-primary {
+  @apply text-primary-600 hover:text-primary-700 hover:bg-primary-50;
+}
+
+.action-secondary {
+  @apply text-gray-600 hover:text-gray-700 hover:bg-gray-50;
+}
+
+/* Layout grid utilities */
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-auto-fill {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+/* Responsive utilities */
+.mobile-only {
+  @apply block sm:hidden;
+}
+
+.desktop-only {
+  @apply hidden sm:block;
+}
+
+.tablet-up {
+  @apply hidden md:block;
+}
+
+/* Print utilities */
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+  
+  .print-visible {
+    display: block !important;
+  }
+  
+  .print-break-before {
+    page-break-before: always;
+  }
+  
+  .print-break-after {
+    page-break-after: always;
+  }
+}
+
+/* Accessibility utilities */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+  clip: rect(0, 0, 0, 0);
+}
+
+.focus-visible {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+}
+
+/* Animation utilities */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+.slide-enter {
+  transform: translateX(-100%);
+}
+
+.slide-enter-active {
+  transform: translateX(0);
+  transition: transform 300ms ease-out;
+}
+
+.slide-exit {
+  transform: translateX(0);
+}
+
+.slide-exit-active {
+  transform: translateX(-100%);
+  transition: transform 300ms ease-in;
+}
