@@ -130,15 +130,15 @@
   .print-hidden {
     display: none !important;
   }
-  
+
   .print-visible {
     display: block !important;
   }
-  
+
   .print-break-before {
     page-break-before: always;
   }
-  
+
   .print-break-after {
     page-break-after: always;
   }

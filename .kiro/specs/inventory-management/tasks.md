@@ -134,7 +134,7 @@
   - **Git**: Commit Tailwind CSS configuration and setup
   - _Requirements: 5.1, 5.3, 5.5, 6.2_
 
-- [ ] 7.1 Set up React application with routing and styling
+- [-] 7.1 Set up React application with routing and styling
   - Install and configure Tailwind CSS in the React application
   - Set up React Router in `frontend/src/` for navigation between pages
   - Create basic page components (Dashboard, Inventory, Admin, Login) in `frontend/src/pages/`
