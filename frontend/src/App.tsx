@@ -8,11 +8,17 @@ import {
 import { AuthProvider, NotificationProvider, useAuth } from './contexts';
 import { ProtectedRoute, Layout, ToastContainer, ErrorBoundary } from './components';
 import { Dashboard, Inventory, Admin, Login } from './pages';
-import { useApiService } from './hooks';
+import { useApiService, useRealTimeUpdates } from './hooks';
 
 const AppContent: React.FC = () => {
   // Initialize API service with global error handling
   useApiService();
+  
+  // Initialize real-time updates for the entire app
+  useRealTimeUpdates({
+    enableInventoryUpdates: true,
+    enableAlerts: true
+  });
 
   return (
     <Router>

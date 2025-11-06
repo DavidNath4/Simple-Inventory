@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DashboardMetrics } from '../types';
 import { apiService } from '../services/api';
-import { useInventoryNotifications } from '../hooks';
-import { AlertList } from '../components';
+import { useInventoryNotifications, useRealTimeUpdates } from '../hooks';
+import { AlertList, RealTimeStatus } from '../components';
+import RealTimeTestPanel from '../components/RealTimeTestPanel';
 import {
   MetricsCard,
   SimpleChart,
@@ -15,9 +16,19 @@ const Dashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { notifySystem } = useInventoryNotifications();
+  const { notifySystem, isRealTimeConnected, checkAlertsManually } = useInventoryNotifications();
+  
+  // Set up real-time updates with refresh callback
+  const { isConnected } = useRealTimeUpdates({
+    enableInventoryUpdates: true,
+    enableAlerts: true,
+    onInventoryUpdate: () => {
+      // Refresh dashboard metrics when inventory updates
+      loadDashboardMetrics();
+    }
+  });
 
-  const loadDashboardMetrics = async () => {
+  const loadDashboardMetrics = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -33,7 +44,13 @@ const Dashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [notifySystem]);
+
+  const handleManualRefresh = useCallback(() => {
+    loadDashboardMetrics();
+    checkAlertsManually();
+    notifySystem('info', 'Dashboard Refreshed', 'Data has been updated');
+  }, [loadDashboardMetrics, checkAlertsManually, notifySystem]);
 
   useEffect(() => {
     loadDashboardMetrics();
@@ -128,11 +145,37 @@ const Dashboard: React.FC = () => {
       <div className='max-w-7xl mx-auto py-6 sm:px-6 lg:px-8'>
         <div className='px-4 py-6 sm:px-0'>
           {/* Header */}
-          <div className='mb-8'>
-            <h1 className='text-3xl font-bold text-gray-900'>Dashboard</h1>
-            <p className='mt-2 text-gray-600'>
-              Overview of your inventory performance and key metrics
-            </p>
+          <div className='mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
+            <div>
+              <h1 className='text-3xl font-bold text-gray-900'>Dashboard</h1>
+              <p className='mt-2 text-gray-600'>
+                Overview of your inventory performance and key metrics
+              </p>
+            </div>
+            <div className='mt-4 sm:mt-0 flex items-center space-x-4'>
+              <RealTimeStatus />
+              <button
+                onClick={handleManualRefresh}
+                disabled={loading}
+                className='btn-secondary flex items-center space-x-2'
+                title='Refresh dashboard data'
+              >
+                <svg
+                  className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+                  />
+                </svg>
+                <span>Refresh</span>
+              </button>
+            </div>
           </div>
 
           {/* Overview Metrics */}
@@ -343,6 +386,13 @@ const Dashboard: React.FC = () => {
 
           {/* Report Generator */}
           <ReportGenerator onReportGenerated={loadDashboardMetrics} />
+
+          {/* Real-Time Testing Panel (Development only) */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-8">
+              <RealTimeTestPanel />
+            </div>
+          )}
         </div>
       </div>
     </div>

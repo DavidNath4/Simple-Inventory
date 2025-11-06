@@ -2,10 +2,11 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { InventoryController } from '../controllers/inventory.controller';
 import { AuthMiddleware } from '../middleware/auth.middleware';
+import { WebSocketService } from '../services/websocket.service';
 
-export function createInventoryRoutes(prisma: PrismaClient): Router {
+export function createInventoryRoutes(prisma: PrismaClient, webSocketService?: WebSocketService): Router {
   const router = Router();
-  const inventoryController = new InventoryController(prisma);
+  const inventoryController = new InventoryController(prisma, webSocketService);
   const authMiddleware = new AuthMiddleware(prisma);
 
   // All inventory routes require authentication

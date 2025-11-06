@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { InventoryItemRepository } from '../repositories/inventory-item.repository';
 import { InventoryActionRepository } from '../repositories/inventory-action.repository';
 import { AlertService, LowStockAlert } from '../services/alert.service';
+import { WebSocketService } from '../services/websocket.service';
 import { 
   CreateInventoryItemRequest, 
   UpdateInventoryItemRequest, 
@@ -21,12 +22,14 @@ export class InventoryController {
   private actionRepository: InventoryActionRepository;
   private alertService: AlertService;
   private prisma: PrismaClient;
+  private webSocketService?: WebSocketService;
 
-  constructor(prisma: PrismaClient) {
+  constructor(prisma: PrismaClient, webSocketService?: WebSocketService) {
     this.prisma = prisma;
     this.inventoryRepository = new InventoryItemRepository(prisma);
     this.actionRepository = new InventoryActionRepository(prisma);
     this.alertService = new AlertService(prisma);
+    this.webSocketService = webSocketService;
   }
 
   // GET /api/inventory - Get all inventory items with filtering and pagination
@@ -117,6 +120,15 @@ export class InventoryController {
 
       const item = await this.inventoryRepository.create(data);
       
+      // Broadcast real-time update
+      if (this.webSocketService) {
+        this.webSocketService.broadcastInventoryUpdate({
+          type: 'created',
+          item,
+          userId: (req as any).user?.id
+        });
+      }
+      
       const response: ApiResponse<InventoryItem> = {
         success: true,
         data: item,
@@ -152,6 +164,15 @@ export class InventoryController {
 
       const item = await this.inventoryRepository.update(id, data);
       
+      // Broadcast real-time update
+      if (this.webSocketService) {
+        this.webSocketService.broadcastInventoryUpdate({
+          type: 'updated',
+          item,
+          userId: (req as any).user?.id
+        });
+      }
+      
       const response: ApiResponse<InventoryItem> = {
         success: true,
         data: item,
@@ -173,7 +194,20 @@ export class InventoryController {
   async deleteInventoryItem(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
+      
+      // Get item details before deletion for broadcasting
+      const item = await this.inventoryRepository.findById(id);
+      
       await this.inventoryRepository.delete(id);
+      
+      // Broadcast real-time update
+      if (this.webSocketService) {
+        this.webSocketService.broadcastInventoryUpdate({
+          type: 'deleted',
+          item,
+          userId: (req as any).user?.id
+        });
+      }
       
       const response: ApiResponse<null> = {
         success: true,
@@ -326,6 +360,7 @@ export class InventoryController {
       }
 
       // Update stock level and create action record in a transaction
+      const oldStockLevel = currentItem.stockLevel;
       const updatedItem = await this.inventoryRepository.updateStock(id, newStockLevel);
       
       // Create inventory action record for tracking
@@ -337,6 +372,30 @@ export class InventoryController {
       };
 
       await this.actionRepository.create(actionData, userId);
+
+      // Broadcast real-time update
+      if (this.webSocketService) {
+        this.webSocketService.broadcastInventoryUpdate({
+          type: 'stock_updated',
+          item: updatedItem,
+          userId,
+          details: {
+            oldStock: oldStockLevel,
+            newStock: newStockLevel,
+            quantity,
+            actionType: type
+          }
+        });
+
+        // Check if this update triggers a low stock alert
+        if (newStockLevel <= updatedItem.minStock) {
+          const alerts = await this.alertService.getCurrentAlerts();
+          const itemAlert = alerts.find(alert => alert.itemId === id);
+          if (itemAlert) {
+            this.webSocketService.broadcastAlert(itemAlert);
+          }
+        }
+      }
 
       const response: ApiResponse<InventoryItem> = {
         success: true,

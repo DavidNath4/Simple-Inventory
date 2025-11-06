@@ -1,10 +1,17 @@
 import { useEffect, useCallback } from 'react';
 import { useNotifications } from '../contexts/NotificationContext';
 import { apiService } from '../services/api';
+import { useRealTimeUpdates } from './useRealTimeUpdates';
 import { InventoryItem, DashboardMetrics } from '../types';
 
 export const useInventoryNotifications = () => {
   const { addNotification, addAlert } = useNotifications();
+  
+  // Enable real-time updates for inventory and alerts
+  const { isConnected, checkAlerts } = useRealTimeUpdates({
+    enableInventoryUpdates: true,
+    enableAlerts: true
+  });
 
   // Check for low stock alerts
   const checkLowStockAlerts = useCallback(async () => {
@@ -192,21 +199,24 @@ export const useInventoryNotifications = () => {
     [addNotification]
   );
 
-  // Periodic check for alerts (every 5 minutes)
+  // Periodic check for alerts (reduced frequency when real-time is available)
   useEffect(() => {
     // Initial check
     checkLowStockAlerts();
 
-    // Set up periodic checking
-    const interval = setInterval(checkLowStockAlerts, 5 * 60 * 1000); // 5 minutes
+    // Set up periodic checking - less frequent if real-time is connected
+    const interval = isConnected ? 10 * 60 * 1000 : 5 * 60 * 1000; // 10 minutes if connected, 5 minutes if not
+    const intervalId = setInterval(checkLowStockAlerts, interval);
 
-    return () => clearInterval(interval);
-  }, [checkLowStockAlerts]);
+    return () => clearInterval(intervalId);
+  }, [checkLowStockAlerts, isConnected]);
 
   return {
     notifyInventoryUpdate,
     notifyBulkOperation,
     notifySystem,
     checkLowStockAlerts,
+    isRealTimeConnected: isConnected,
+    checkAlertsManually: checkAlerts,
   };
 };

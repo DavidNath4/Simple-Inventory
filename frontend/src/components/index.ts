@@ -5,6 +5,7 @@ export { default as FormInput } from './FormInput';
 export { default as LoadingButton } from './LoadingButton';
 export { default as LoadingSpinner, PageLoader, InlineLoader, FullScreenLoader, LoadingOverlay } from './LoadingSpinner';
 export { ErrorBoundary, withErrorBoundary, useErrorHandler } from './ErrorBoundary';
+export { default as RealTimeStatus } from './RealTimeStatus';
 
 // Admin components
 export * from './admin';

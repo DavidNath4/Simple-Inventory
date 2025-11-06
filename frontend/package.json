@@ -16,6 +16,7 @@
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.5",
     "react-scripts": "5.0.1",
+    "socket.io-client": "^4.8.1",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -23,6 +24,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:unit": "react-scripts test --testPathIgnorePatterns=integration --watchAll=false",
+    "test:integration": "react-scripts test --testPathPattern=integration --watchAll=false",
+    "test:all": "npm run test:unit && npm run test:integration",
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",

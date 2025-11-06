@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import RealTimeStatus from './RealTimeStatus';
 
 const Navigation: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -138,6 +139,7 @@ const Navigation: React.FC = () => {
 
           {/* Desktop User Menu */}
           <div className='hidden md:flex md:items-center md:space-x-4'>
+            <RealTimeStatus className="mr-2" />
             <div className='flex items-center space-x-3'>
               <div className='flex items-center space-x-2'>
                 <div className='h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center'>

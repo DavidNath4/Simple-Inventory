@@ -5,6 +5,7 @@ export type {
   FormErrors,
 } from './useFormValidation';
 export { useInventoryNotifications } from './useInventoryNotifications';
+export { useRealTimeUpdates } from './useRealTimeUpdates';
 export { 
   useApi, 
   useApiMutation, 

@@ -188,12 +188,12 @@
   - **Git**: Commit frontend-backend integration implementation
   - _Requirements: All requirements depend on proper integration, 6.2_
 
-- [ ] 8.2 Add real-time features with WebSocket or polling
+- [x] 8.2 Add real-time features with WebSocket or polling
   - Implement real-time inventory updates in UI
   - Add live notifications for alerts
   - _Requirements: 1.1, 3.4_
 
-- [ ]* 8.3 Write integration tests
+- [x] 8.3 Write integration tests
   - Test complete user workflows end-to-end
   - Test error scenarios and edge cases
   - _Requirements: All requirements_
