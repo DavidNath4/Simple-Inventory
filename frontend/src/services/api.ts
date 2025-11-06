@@ -1,4 +1,4 @@
-import { ApiResponse, ApiError } from '../types';
+import { ApiResponse } from '../types';
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
@@ -9,15 +9,15 @@ class ApiService {
 
   constructor(baseURL: string = API_BASE_URL) {
     this.baseURL = baseURL;
-    this.token = localStorage.getItem('authToken');
+    this.token = localStorage.getItem('auth_token');
   }
 
   setToken(token: string | null) {
     this.token = token;
     if (token) {
-      localStorage.setItem('authToken', token);
+      localStorage.setItem('auth_token', token);
     } else {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('auth_token');
     }
   }
 
@@ -88,6 +88,112 @@ class ApiService {
     return this.get<ApiResponse<{ status: string; message: string }>>(
       '/health'
     );
+  }
+
+  // Authentication methods
+  async login(credentials: { email: string; password: string }) {
+    const response = await this.post<any>('/auth/login', credentials);
+    if (response.token) {
+      this.setToken(response.token);
+    }
+    return response;
+  }
+
+  async logout() {
+    this.setToken(null);
+    return this.post<any>('/auth/logout');
+  }
+
+  // Inventory methods
+  async getInventoryItems(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    category?: string;
+    location?: string;
+    lowStock?: boolean;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return this.get(`/inventory${query ? `?${query}` : ''}`);
+  }
+
+  async getInventoryItem(id: string) {
+    return this.get(`/inventory/${id}`);
+  }
+
+  async createInventoryItem(data: any) {
+    return this.post('/inventory', data);
+  }
+
+  async updateInventoryItem(id: string, data: any) {
+    return this.put(`/inventory/${id}`, data);
+  }
+
+  async deleteInventoryItem(id: string) {
+    return this.delete(`/inventory/${id}`);
+  }
+
+  async getCategories() {
+    return this.get('/inventory/categories');
+  }
+
+  async getLocations() {
+    return this.get('/inventory/locations');
+  }
+
+  async getLowStockItems() {
+    return this.get('/inventory/low-stock');
+  }
+
+  async updateStock(
+    id: string,
+    data: { quantity: number; type: string; notes?: string }
+  ) {
+    return this.post(`/inventory/${id}/stock`, data);
+  }
+
+  async adjustStock(id: string, data: { stockLevel: number; notes?: string }) {
+    return this.post(`/inventory/${id}/adjust`, data);
+  }
+
+  async getInventoryActions(
+    id: string,
+    params?: { page?: number; limit?: number }
+  ) {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return this.get(`/inventory/${id}/actions${query ? `?${query}` : ''}`);
+  }
+
+  async bulkUpdateItems(updates: any[]) {
+    return this.post('/inventory/bulk/update', { updates });
+  }
+
+  async bulkUpdateStock(updates: any[]) {
+    return this.post('/inventory/bulk/stock', { updates });
+  }
+
+  async bulkCreateItems(items: any[]) {
+    return this.post('/inventory/bulk/create', { items });
+  }
+
+  async bulkDeleteItems(ids: string[]) {
+    return this.post('/inventory/bulk/delete', { ids });
   }
 }
 

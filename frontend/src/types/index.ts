@@ -76,3 +76,74 @@ export interface AuthResponse {
   user: User;
   token: string;
 }
+
+// Pagination types
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+// Filter types
+export interface InventoryFilter {
+  search?: string;
+  category?: string;
+  location?: string;
+  lowStock?: boolean;
+}
+
+// Request types for inventory operations
+export interface CreateInventoryItemRequest {
+  name: string;
+  description?: string;
+  sku: string;
+  category: string;
+  stockLevel?: number;
+  minStock?: number;
+  maxStock?: number;
+  unitPrice: number;
+  location: string;
+}
+
+export interface UpdateInventoryItemRequest {
+  name?: string;
+  description?: string;
+  category?: string;
+  minStock?: number;
+  maxStock?: number;
+  unitPrice?: number;
+  location?: string;
+}
+
+export interface StockUpdateRequest {
+  quantity: number;
+  type: ActionType;
+  notes?: string;
+}
+
+export interface StockAdjustRequest {
+  stockLevel: number;
+  notes?: string;
+}
+
+// Bulk operation types
+export interface BulkUpdateItem {
+  id: string;
+  name?: string;
+  category?: string;
+  location?: string;
+  minStock?: number;
+  maxStock?: number;
+  unitPrice?: number;
+}
+
+export interface BulkStockUpdate {
+  id: string;
+  stockLevel: number;
+  type?: ActionType;
+  notes?: string;
+}
